@@ -7,6 +7,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -14,6 +15,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="bg-slate-900 text-slate-100">
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/SignIn" element={<SignIn />} />
