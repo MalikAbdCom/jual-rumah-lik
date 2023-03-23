@@ -26,24 +26,30 @@ const Header = () => {
         <div>
           <ul className="flex space-x-5">
             <li
-              className={`cursor-pointer py-3 border-b-[3px] border-b-transparent text-slate-500 text-sm font-bold ${
-                isCurrentPage("/") && "text-slate-200 border-b-red-500"
+              className={`cursor-pointer py-3 border-b-[3px]   text-sm font-bold ${
+                isCurrentPage("/")
+                  ? "text-slate-200 border-b-red-500"
+                  : "border-b-transparent text-slate-500"
               }`}
               onClick={() => navigate("/")}
             >
               Home
             </li>
             <li
-              className={`cursor-pointer py-3 border-b-[3px] border-b-transparent text-slate-500 text-sm font-bold ${
-                isCurrentPage("/Offers") && "text-slate-200 border-b-red-500"
+              className={`cursor-pointer py-3 border-b-[3px]   text-sm font-bold ${
+                isCurrentPage("/Offers")
+                  ? "text-slate-200 border-b-red-500"
+                  : "border-b-transparent text-slate-500"
               }`}
               onClick={() => navigate("/Offers")}
             >
               Offers
             </li>
             <li
-              className={`cursor-pointer py-3 border-b-[3px] border-b-transparent text-slate-500 text-sm font-bold ${
-                isCurrentPage("/SignIn") && "text-slate-200 border-b-red-500"
+              className={`cursor-pointer py-3 border-b-[3px]   text-sm font-bold ${
+                isCurrentPage("/SignIn")
+                  ? "text-slate-200 border-b-red-500"
+                  : "border-b-transparent text-slate-500"
               }`}
               onClick={() => navigate("/SignIn")}
             >
