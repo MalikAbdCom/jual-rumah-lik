@@ -1,0 +1,69 @@
+    //================= Firestore rules
+
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Listings
+    match /listings/{listing} {
+    	allow read;
+      allow create: if request.auth != null && request.resource.data.imgUrls.size() < 7;
+    	allow delete: if resource.data.userRef == request.auth.uid;
+      allow update: if resource.data.userRef == request.auth.uid;
+    }
+   
+    // Users
+    match /users/{user} {
+    	allow read;
+    	allow create;
+    	allow update: if request.auth.uid == user
+    }
+  }
+}
+
+    // penjelasan dari chat.openai.com mengenai rules di atas
+
+Kode tersebut adalah aturan keamanan (security rules) untuk layanan cloud Firestore di Firebase. Aturan ini terdiri dari dua bagian:
+
+rules_version - Versi aturan Firebase Security Rules yang digunakan, dalam hal ini adalah versi 2.
+
+service cloud.firestore - Aturan ini diterapkan pada layanan Firebase Cloud Firestore.
+
+match /databases/{database}/documents - Aturan ini cocok dengan setiap dokumen yang ada dalam basis data Firestore.
+
+match /listings/{listing} - Aturan ini cocok dengan dokumen yang berada di dalam koleksi listings.
+
+allow read - Memberikan izin untuk membaca data dari dokumen atau koleksi.
+
+allow create: if request.auth != null && request.resource.data.imgUrls.size() < 7; - Memberikan izin untuk membuat dokumen baru dalam koleksi listings hanya jika pengguna yang membuat dokumen terautentikasi (request.auth tidak sama dengan null) dan jumlah elemen dalam array imgUrls pada dokumen yang dibuat kurang dari 7.
+
+allow delete: if resource.data.userRef == request.auth.uid; - Memberikan izin untuk menghapus dokumen dalam koleksi listings hanya jika userRef dalam dokumen yang dihapus sama dengan uid pengguna yang terautentikasi saat mengirim permintaan.
+
+allow update: if resource.data.userRef == request.auth.uid; - Memberikan izin untuk memperbarui dokumen dalam koleksi listings hanya jika userRef dalam dokumen yang diperbarui sama dengan uid pengguna yang terautentikasi saat mengirim permintaan.
+
+match /users/{user} - Aturan ini cocok dengan dokumen yang berada di dalam koleksi users.
+
+allow create - Memberikan izin untuk membuat dokumen baru dalam koleksi users.
+
+allow read - Memberikan izin untuk membaca data dari dokumen atau koleksi.
+
+allow update: if request.auth.uid == user - Memberikan izin untuk memperbarui dokumen dalam koleksi users hanya jika pengguna yang memperbarui dokumen sama dengan pengguna yang dokumen tersebut miliknya.
+
+
+
+
+    //================= Storage rules
+
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read;
+      allow write: if
+      request.auth != null &&
+      request.resource.size < 2 * 1024 * 1024 && //2MB
+      request.resource.contentType.matches('image/.*')
+    }
+  }
+}

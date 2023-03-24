@@ -1,12 +1,16 @@
 import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// Toastify
+import { ToastContainer, Zoom } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Offers from "./pages/Offers";
 import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 
 function App() {
@@ -27,6 +31,13 @@ function App() {
           </Routes>
         </div>
       </div>
+      <ToastContainer
+        theme="dark"
+        position="bottom-center"
+        transition={Zoom}
+        style={{ borderRadius: "12px" }}
+        autoClose={2000}
+      />
     </BrowserRouter>
   );
 }

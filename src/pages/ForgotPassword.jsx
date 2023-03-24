@@ -53,7 +53,6 @@ const ForgotPassword = () => {
             />
 
             <div className="flex flex-col md:flex-row justify-between">
-              {/* dont't have an account? Sign Up */}
               <div className="text-sm flex items-center mb-2">
                 <p className="text-sm">Don't have an account?</p>
                 <Link to="/SignUp" className="text-blue-300 ml-2">
