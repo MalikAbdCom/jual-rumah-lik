@@ -1,55 +1,48 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import { FcGoogle } from "react-icons/fc";
 
 // firebase
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { toast } from "react-toastify";
+import { db } from "../firebase.config";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 
 const OAuth = () => {
+  const navigate = useNavigate();
+
   // firebase auth
-  const firebaseSignIn = async () => {
+  const googleSignIn = async () => {
     try {
       const auth = getAuth();
-      auth.languageCode = "id";
-
       const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          const token = credential.accessToken;
-          // The signed-in user info.
-          const { user } = result;
-          // IdP data available using getAdditionalUserInfo(result)
-          // ...
-          console.log(user);
-          console.log(credential);
+      // create a snapshot to verify if user exist
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
 
-          toast.success("Sign in with Google success");
-        })
-        .catch((error) => {
-          // Handle Errors here.
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // The email of the user's account used.
-          const email = error.customData.email;
-          // The AuthCredential type that was used.
-          const credential = GoogleAuthProvider.credentialFromError(error);
-          // ...
-
-          toast.error("Can't sign ini with Google");
+      if (!docSnap.exists()) {
+        await setDoc(docRef, {
+          name: user.displayName,
+          email: user.email,
+          timestamp: serverTimestamp(),
         });
+      }
+
+      navigate("/");
     } catch (error) {
-      toast.error("Can't sign ini with Google");
+      console.log(error);
+      toast.error("Something went wrong");
     }
   };
 
   return (
     <button
       type="button"
-      onClick={firebaseSignIn}
+      onClick={googleSignIn}
       className="flex items-center w-full justify-center bg-red-600 text-sm py-3 rounded font-semibold transition ease-in-out duration-200 hover:bg-red-700 active:bg-red-800"
     >
       <FcGoogle className="bg-white rounded-full mr-2" />
