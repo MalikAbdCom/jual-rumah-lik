@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+// firebase
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { db } from "../firebase.config";
+
+// Toastify
+import { toast } from "react-toastify";
 
 import OAuth from "../components/OAuth";
+import { setDoc, doc, serverTimestamp } from "@firebase/firestore";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,7 +23,10 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+  const { name, email, password } = inputValue;
+  const navigate = useNavigate();
 
+  // handle change input
   const handleChange = (e) => {
     setInputValue((prevValue) => {
       return {
@@ -21,12 +36,51 @@ const SignUp = () => {
     });
   };
 
+  // handle show password
   const handleShowPassword = () => {
     setShowPassword((prevValue) => !prevValue);
   };
 
-  const handleSubmit = (e) => {
+  // handle submit
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      //get auth
+      const auth = await getAuth();
+      // create user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      // update profile
+      await updateProfile(auth.currentUser, {
+        displayName: name,
+      });
+
+      const { user } = userCredential;
+
+      // remove password from inputValue
+      const inputValueCopy = { ...inputValue };
+      delete inputValueCopy.password;
+
+      // add timestamp to inputValueCopy
+      inputValueCopy.timestamp = serverTimestamp();
+
+      // add data from inputValueCopy to database firestore
+      await setDoc(doc(db, "users", user.uid), inputValueCopy);
+
+      // toast success
+      toast.success("Sign Up Success");
+
+      // navigate to home
+      navigate("/");
+
+      return user;
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
   };
 
   return (
@@ -51,7 +105,7 @@ const SignUp = () => {
               type="text"
               placeholder="e.g John Doe"
               className="text-slate-700 rounded w-full transition ease-in-out duration-300 text-md "
-              value={inputValue.name}
+              value={name}
             />
             <input
               onChange={handleChange}
@@ -59,7 +113,7 @@ const SignUp = () => {
               type="text"
               placeholder="YourEmail@email.com"
               className="text-slate-700 rounded w-full transition ease-in-out duration-300 text-md "
-              value={inputValue.email}
+              value={email}
             />
             <div className="relative">
               <input
@@ -68,7 +122,7 @@ const SignUp = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder="Type Your Password"
                 className="text-slate-700 rounded w-full transition ease-in-out duration-300 text-md "
-                value={inputValue.password}
+                value={password}
               />
               <button
                 onClick={handleShowPassword}
@@ -87,7 +141,6 @@ const SignUp = () => {
             </div>
 
             <div className="flex flex-col md:flex-row justify-between">
-              {/* dont't have an account? Sign Up */}
               <div className="text-sm flex items-center mb-2">
                 <p className="text-sm">Already have an account?</p>
                 <Link to="/SignIn" className="text-blue-300 ml-2">
