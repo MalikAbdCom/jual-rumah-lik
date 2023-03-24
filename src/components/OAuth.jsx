@@ -31,7 +31,7 @@ const OAuth = () => {
           timestamp: serverTimestamp(),
         });
       }
-
+      toast.success("Login Successful");
       navigate("/");
     } catch (error) {
       console.log(error);
