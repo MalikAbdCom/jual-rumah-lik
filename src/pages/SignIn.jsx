@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-toastify";
 
 import OAuth from "../components/OAuth";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [inputValue, setInputValue] = useState({
     email: "",
@@ -26,6 +30,27 @@ const SignIn = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const login = async () => {
+      const auth = getAuth();
+      try {
+        const result = await signInWithEmailAndPassword(
+          auth,
+          inputValue.email,
+          inputValue.password
+        );
+        const user = result.user;
+        console.log(user);
+
+        toast.success("Login Successful");
+        navigate("/");
+      } catch (error) {
+        console.log(error);
+        toast.error("Something went wrong");
+      }
+    };
+
+    login();
   };
 
   return (
@@ -94,6 +119,7 @@ const SignIn = () => {
             <button
               type="submit"
               className="bg-blue-500 text-white rounded py-2 font-semibold text-md hover:bg-blue-600 transition ease-in-out duration-300 active:bg-blue-700 shadow-gray-700 shadow hover:shadow-md hover:shadow-gray-600"
+              onSubmit={handleSubmit}
             >
               Sign In
             </button>
