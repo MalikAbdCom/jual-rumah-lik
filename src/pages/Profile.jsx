@@ -75,7 +75,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-6xl flex flex-col justify-center items-center mx-auto p-2">
+    <div className="max-w-6xl flex flex-col justify-center items-center mx-auto p-2 h-[calc(100vh-48px)]">
       <h1 className="text-center text-3xl font-bold p-6 mb-6">Profile</h1>
       <div className="w-full max-w-[500px]">
         <input
