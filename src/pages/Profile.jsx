@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getAuth, updateProfile } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { doc, updateDoc } from "firebase/firestore";
+import { FcHome } from "react-icons/fc";
 
 import { toast } from "react-toastify";
 
@@ -123,6 +124,16 @@ const Profile = () => {
             Sign Out
           </p>
         </div>
+
+        <button
+          type="button"
+          className=" w-full bg-sky-500 text-medium font-medium rounded px-7 py-3 shadow shadow-blue-400 hover:bg-blue-500 active:bg-blue-600 transition ease-in-out duration-300"
+        >
+          <Link className="flex items-center justify-center" to={"/CreateItem"}>
+            <FcHome className="mr-2 bg-white h-7 w-7 p-1 rounded-full" />
+            Sell or Rent you Home
+          </Link>
+        </button>
       </div>
     </div>
   );

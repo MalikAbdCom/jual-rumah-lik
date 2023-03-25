@@ -13,6 +13,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
+import CreateItem from "./pages/CreateItem";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -31,6 +32,7 @@ function App() {
             <Route path="/Profile" element={<PrivateRoute />}>
               <Route path="/Profile" element={<Profile />} />
             </Route>
+            <Route path="/CreateItem" element={<CreateItem />} />
           </Routes>
         </div>
       </div>
