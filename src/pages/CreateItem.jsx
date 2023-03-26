@@ -14,6 +14,7 @@ const CreateItem = () => {
     regularPrice: 0,
     discountedPrice: 0,
   });
+
   const {
     type,
     name,
@@ -27,7 +28,33 @@ const CreateItem = () => {
     regularPrice,
     discountedPrice,
   } = formData;
-  function onChange() {}
+
+  function onChange(e) {
+    let boolean = null;
+    // boolean value
+    // untuk melakukan check pada value seperti radio button
+    if (e.target.value === "true") {
+      boolean = true;
+    }
+    if (e.target.value === "false") {
+      boolean = false;
+    }
+    // penulisan ulang ke dalam state
+    // files
+    if (e.target.files) {
+      setFormData({
+        ...formData,
+        images: e.target.files,
+      });
+    }
+    // text number boolean
+    if (!e.target.files) {
+      setFormData({
+        ...formData,
+        [e.target.id]: boolean ?? e.target.value,
+      });
+    }
+  }
   return (
     <main className="max-w-md px-2 mx-auto pb-6">
       <h1 className="text-3xl text-center pt-6 font-bold">Create a Listing</h1>
@@ -37,7 +64,7 @@ const CreateItem = () => {
           <button
             type="button"
             id="type"
-            value="sale"
+            value="sell"
             onClick={onChange}
             className={`mr-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
               type === "rent"
@@ -50,10 +77,10 @@ const CreateItem = () => {
           <button
             type="button"
             id="type"
-            value="sale"
+            value="rent"
             onClick={onChange}
             className={`ml-3 px-7 py-3 font-medium text-sm uppercase shadow-md rounded hover:shadow-lg focus:shadow-lg active:shadow-lg transition duration-150 ease-in-out w-full ${
-              type === "sale"
+              type === "sell"
                 ? "bg-white text-black"
                 : "bg-slate-600 text-white"
             }`}
