@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
-import { getAuth, updateProfile } from "firebase/auth";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  collection,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-import { FcHome } from "react-icons/fc";
+import {useEffect, useState} from "react";
+import {getAuth, updateProfile} from "firebase/auth";
+import {Link, useNavigate} from "react-router-dom";
+import {collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where,} from "firebase/firestore";
+import {FcHome} from "react-icons/fc";
 
-import { toast } from "react-toastify";
+import {toast} from "react-toastify";
 
-import { db } from "../firebase.config";
+import {db} from "../firebase.config";
 import ListingItem from "../components/ListingItem.jsx";
 
 const Profile = () => {
@@ -105,18 +97,40 @@ const Profile = () => {
       setListings(listings);
       setLoading(false);
     }
+
     fetchUserListings();
   }, [auth.currentUser.uid]);
 
+  async function onDelete(listingID) {
+    if (window.confirm("are you sure want to delete your item?")) {
+      await deleteDoc(doc(db, "listings", listingID))
+
+      const updatingList = listings.filter((listing) => {
+        return listing.id !== listingID
+      })
+
+      setListings(updatingList)
+
+      toast.success("Item sudah di hapus")
+
+    } else {
+      console.log("batal delete")
+    }
+  }
+
+  function onEdit(listingID) {
+    navigate(`/edit-listing/${listingID}`)
+  }
+
   return (
-    <div className="max-w-6xl flex flex-col justify-center items-center mx-auto p-2 min-h-[calc(100vh-48px)]">
-      <h1 className="text-center text-3xl font-bold p-6 mb-6">Profile</h1>
-      <div className="w-full max-w-[500px]">
-        <input
-          type={"text"}
-          className={`w-full p-2 mb-4 rounded text-slate-700 ${
-            editChange && "bg-red-200 font-bold"
-          }`}
+      <div className="max-w-6xl flex flex-col justify-center items-center mx-auto p-2 min-h-[calc(100vh-48px)]">
+        <h1 className="text-center text-3xl font-bold p-6 mb-6">Profile</h1>
+        <div className="w-full max-w-[500px]">
+          <input
+              type={"text"}
+              className={`w-full p-2 mb-4 rounded text-slate-700 ${
+                  editChange && "bg-red-200 font-bold"
+              }`}
           onChange={(e) =>
             setInputValue((prevState) => {
               return {
@@ -174,11 +188,13 @@ const Profile = () => {
             <h2 className="text-2xl text-center font-semibold">My Listings</h2>
             <ul className="md:flex md:gap-8 md:flex-wrap md:justify-center mt-4">
               {listings.map((listing) => (
-                <ListingItem
-                  key={listing.id}
-                  id={listing.id}
-                  listing={listing.data}
-                />
+                  <ListingItem
+                      key={listing.id}
+                      id={listing.id}
+                      listing={listing.data}
+                      onDelete={() => onDelete(listing.id)}
+                      onEdit={() => onEdit(listing.id)}
+                  />
               ))}
             </ul>
           </>
